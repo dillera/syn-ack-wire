@@ -723,6 +723,7 @@ pc-h89: $(HDRS) src/h89/screens.h
 # pictures (test/palm_host.c, build/pc/palm/*.png).
 PALM_B        = build/palm
 NIO_PALMOS   ?= $(HOME)/code/FujiPalm/fujinet-nio-palmOS
+PALM_NIOLIB  ?= 1
 PALM_NIO_LIB ?= $(HOME)/code/FujiPalm/nio/fujinet-nio-workspace/repos/fujinet-nio-lib
 PALM_GEN      = $(PALM_B)/fonts/palm_fonts.h $(PALM_B)/help_tab.h $(PALM_B)/help.rcp $(PALM_B)/regions_tab.h $(PALM_B)/icon16.bmp \
                 src/common/theme_tab.h src/common/proto_tab.h
@@ -739,7 +740,7 @@ $(PALM_B)/icon16.bmp: tools/palm_icon.py
 include src/palm/defs.mk
 palm: $(PALM_GEN)
 	docker run --rm --platform linux/amd64 -v $(CURDIR):/c -v $(PALM_NIO_LIB):/nio-lib:ro \
-	    -v $(NIO_PALMOS):/nio-palmos:ro -w /c palmdev make -f src/palm/palm.mk PALM_XDEFS='$(PALM_XDEFS)'
+	    -v $(NIO_PALMOS):/nio-palmos:ro -w /c palmdev make -f src/palm/palm.mk PALM_XDEFS='$(PALM_XDEFS)' PALM_NIOLIB=$(PALM_NIOLIB)
 	@ls -l $(PALM_B)/SynAckWire.prc
 # the preview: autoplay plays a game against SERVER (make pc-palm, then build/pc/pc-palm 127.0.0.1 6599), tapping
 # what a player would tap; DUMPDIR=dir saves the screen as dir/scrNNN.ppm at each new prompt and every DUMP_TICKS

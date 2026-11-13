@@ -10,7 +10,13 @@ CFLAGS = -O2 -Wall -palmos5r3 -funsigned-char -D__fastcall__= -DFN_MAX_PACKET_SI
          -I/nio-lib/include -I/nio-lib/include/palmos -I$(B) -I$(B)/fonts $(DEFS)
 SRCS   = src/common/game.c src/common/proto.c src/palm/display.c src/palm/help.c src/palm/text.c src/palm/gfx_palm.c \
          src/palm/input.c src/palm/net_nio.c src/palm/sound.c src/palm/start.c
+# The FujiNet NIO: by default NioLib's client archive (the installed NioLib does the networking: its Network
+# transport is an NIO on the Palm over NetLib); PALM_NIOLIB=0 links fujinet-nio-palmOS's own NIO into the game.
+ifeq ($(PALM_NIOLIB),0)
 LIB    = /nio-palmos/build/palm/fujinet-nio-palmos-local.a
+else
+LIB    = /nio-lib/build/palmos-shared-3.5/libniolib-client.a
+endif
 HDRS   = $(wildcard src/palm/*.h) src/common/game.h src/common/theme_tab.h src/common/proto_tab.h src/config.h \
          src/platform.h src/display.h $(B)/help_tab.h $(B)/regions_tab.h $(B)/fonts/palm_fonts.h
 
