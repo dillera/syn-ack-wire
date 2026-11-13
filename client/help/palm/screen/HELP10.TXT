@@ -3,8 +3,6 @@
 
  Concept, Direction, Testing
    Michael Sternberg
- Code
-   Claude (Anthropic)
 
  The rules are Sid Sackson's
  ACQUIRE (1964), rethemed.
