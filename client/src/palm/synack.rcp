@@ -1,0 +1,71 @@
+#include "synackRsc.h"
+
+VERSION ID 1 "1.0"
+
+ICONFAMILYEX
+BEGIN
+    BITMAP "icon1.bmp" BPP 1
+    BITMAP "icon16.bmp" BPP 16 TRANSPARENT 255 0 255
+    BITMAP "icon16hd.bmp" BPP 16 DENSITY 144 TRANSPARENT 255 0 255
+END
+
+SMALLICONFAMILYEX
+BEGIN
+    BITMAP "sicon1.bmp" BPP 1
+    BITMAP "sicon16.bmp" BPP 16 TRANSPARENT 255 0 255
+    BITMAP "sicon16hd.bmp" BPP 16 DENSITY 144 TRANSPARENT 255 0 255
+END
+
+/* The fonts, as rectangles the game draws itself (tools/palm_fonts.py, src/palm/text.c): 'Glyf' 1000 + N. */
+DATA "Glyf" ID 1000 "fonts/glyphs0.bin"
+DATA "Glyf" ID 1001 "fonts/glyphs1.bin"
+DATA "Glyf" ID 1002 "fonts/glyphs2.bin"
+DATA "Glyf" ID 1003 "fonts/glyphs3.bin"
+DATA "Glyf" ID 1004 "fonts/glyphs4.bin"
+DATA "Glyf" ID 1005 "fonts/glyphs5.bin"
+
+/* The one form: the game draws all of it; the form is there for the menus. */
+FORM ID MainForm AT (0 0 160 160)
+NOFRAME
+USABLE
+MENUID MainMenu
+BEGIN
+END
+
+MENU ID MainMenu
+BEGIN
+    PULLDOWN "Game"
+    BEGIN
+        MENUITEM "Instructions" ID MenuHelp "H"
+        MENUITEM "Hints on/off" ID MenuHints "N"
+        MENUITEM "Sound on/off" ID MenuSound "S"
+        MENUITEM "Region..." ID MenuRegion "R"
+        MENUITEM SEPARATOR
+        MENUITEM "Log off" ID MenuLogOff "L"
+        MENUITEM "Quit" ID MenuQuit "Q"
+    END
+END
+
+FORM ID HandleForm AT (2 64 156 64)
+MODAL
+USABLE
+DEFAULTBTNID HandleCancel
+BEGIN
+    TITLE "Your handle"
+    LABEL "Up to 8 letters or digits:" AUTOID AT (6 16)
+    FIELD ID HandleField AT (6 30 60 12) UNDERLINED SINGLELINE MAXCHARS 8
+    BUTTON "OK" ID HandleOK AT (6 47 36 12)
+    BUTTON "Cancel" ID HandleCancel AT (PREVRIGHT+6 47 AUTO 12)
+    GRAFFITISTATEINDICATOR AT (140 50)
+END
+
+/* The instructions, help/palm/screen, as 'tSTR' 2001.. (tools/help_palm.py --rcp) */
+#include "help.rcp"
+
+ALERT ID NeedAlert
+ERROR
+BEGIN
+    TITLE "SYN-ACK WIRE"
+    MESSAGE "This game needs Palm OS 5 with a high-density colour screen, such as a Sony Clie TG50."
+    BUTTONS "OK"
+END

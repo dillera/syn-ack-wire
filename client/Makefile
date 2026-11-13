@@ -716,6 +716,44 @@ pc-h89: $(HDRS) src/h89/screens.h
 	    -o build/pc/pc-h89 \
 	    src/common/main.c src/common/game.c src/common/proto.c src/h89/display_text.c test/autoplay.c test/pc_harness.c
 
+# --- Palm OS 5 (a high-density colour Palm, such as the Sony Clie TG50): the common code with src/palm/, which draws
+# the game in the screen's own pixels and colours, and the FujiNet NIO that runs on the Palm itself
+# (fujinet-nio-palmOS, its `make palm` first). Built in fujinet-palm's palmdev Docker image; the fonts, icons and
+# tables are generated here. make pc-palm runs the same display on this machine against a server, drawing into
+# pictures (test/palm_host.c, build/pc/palm/*.png).
+PALM_B        = build/palm
+NIO_PALMOS   ?= $(HOME)/code/FujiPalm/fujinet-nio-palmOS
+PALM_NIO_LIB ?= $(HOME)/code/FujiPalm/nio/fujinet-nio-workspace/repos/fujinet-nio-lib
+PALM_GEN      = $(PALM_B)/fonts/palm_fonts.h $(PALM_B)/help_tab.h $(PALM_B)/help.rcp $(PALM_B)/regions_tab.h $(PALM_B)/icon16.bmp \
+                src/common/theme_tab.h src/common/proto_tab.h
+$(PALM_B)/fonts/palm_fonts.h: tools/palm_fonts.py
+	python3 tools/palm_fonts.py $(PALM_B)/fonts
+$(PALM_B)/help_tab.h: $(sort $(wildcard help/palm/screen/HELP*.TXT)) tools/help_palm.py
+	mkdir -p $(PALM_B) && python3 tools/help_palm.py $@ $(sort $(wildcard help/palm/screen/HELP*.TXT))
+$(PALM_B)/help.rcp: $(sort $(wildcard help/palm/screen/HELP*.TXT)) tools/help_palm.py
+	mkdir -p $(PALM_B) && python3 tools/help_palm.py --rcp $@ $(sort $(wildcard help/palm/screen/HELP*.TXT))
+$(PALM_B)/regions_tab.h: ../server/servers.fly.toml ../fly.toml ../tools/gen_regions.py
+	mkdir -p $(PALM_B) && python3 ../tools/gen_regions.py h > $@
+$(PALM_B)/icon16.bmp: tools/palm_icon.py
+	python3 tools/palm_icon.py $(PALM_B)
+include src/palm/defs.mk
+palm: $(PALM_GEN)
+	docker run --rm --platform linux/amd64 -v $(CURDIR):/c -v $(PALM_NIO_LIB):/nio-lib:ro \
+	    -v $(NIO_PALMOS):/nio-palmos:ro -w /c palmdev make -f src/palm/palm.mk PALM_XDEFS='$(PALM_XDEFS)'
+	@ls -l $(PALM_B)/SynAckWire.prc
+# the preview: autoplay plays a game against SERVER (make pc-palm, then build/pc/pc-palm 127.0.0.1 6599), tapping
+# what a player would tap; DUMPDIR=dir saves the screen as dir/scrNNN.ppm at each new prompt and every DUMP_TICKS
+pc-palm: $(PALM_GEN) test/palm_host.c test/autoplay.c $(wildcard src/palm/*.c src/palm/*.h) $(HDRS)
+	mkdir -p build/pc
+	gcc -g -std=gnu99 -Wall -Wno-main -funsigned-char -D__fastcall__= -DPALM_HOST -DAUTOPLAY -DAUTOCLICK \
+	    -DDUMP_TICKS=240 -DKEY_TICKS=20 -DAUTO_HANDLE='"PALM"' $(PALM_DEFS) -I$(PALM_B) -I$(PALM_B)/fonts \
+	    -Dmain=synack_main -c src/common/main.c -o build/pc/palm_main.o
+	gcc -g -std=gnu99 -Wall -Wno-main -funsigned-char -D__fastcall__= -DPALM_HOST -DAUTOPLAY -DAUTOCLICK \
+	    -DDUMP_TICKS=240 -DKEY_TICKS=20 -DAUTO_HANDLE='"PALM"' $(PALM_DEFS) -I$(PALM_B) -I$(PALM_B)/fonts \
+	    -o build/pc/pc-palm build/pc/palm_main.o src/common/game.c src/common/proto.c src/palm/display.c \
+	    src/palm/help.c src/palm/text.c test/palm_host.c test/autoplay.c
+.PHONY: palm pc-palm
+
 # --- Amiga (stock A500, Kickstart/Workbench 1.3): the common code with src/amiga/, and fujinet-nio-lib (a prebuilt
 # build/fujinet-nio-amiga.a in the fujinet-nio workspace, read only: make -C $(FUJINET_NIO_LIB) amiga). nix13, not
 # clib2: clib2's start-up opens utility.library, which Kickstart 1.3 doesn't have. tools/run-amiga.sh runs a program

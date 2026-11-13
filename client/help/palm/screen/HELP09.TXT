@@ -1,0 +1,24 @@
+{ THE SCREEN AND THE STYLUS        9/10 }
+
+ Pad     an empty node
+ Chip    a lone spike
+ {G}       a hive: its syndicate's colour
+ 1-6     where that exploit can run
+ Frost   a Black ICE hive (11+ nodes)
+ Amber ring  the last move
+
+ > you   * bot   ? away
+ Amber row: whose turn. The colours
+ under the accounts are the crypto held.
+
+TAP:
+ a lit node or a kit slot: run it
+ a syndicate on the right: pick or buy
+ the buttons on the bottom line
+ the log: look back through it
+ ? help   # hints   speaker: sound
+ the power sign: log off
+
+KEYS (the Clie's keyboard works too):
+ 1-6 exploit   letters: syndicates
+ Backspace undo   Return confirm   Y/N

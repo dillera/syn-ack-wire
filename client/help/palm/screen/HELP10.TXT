@@ -1,0 +1,23 @@
+{ CREDITS                          10/10 }
+ SYN-ACK WIRE
+
+ Concept, Direction, Testing
+   Michael Sternberg
+ Code
+   Claude (Anthropic)
+
+ The rules are Sid Sackson's
+ ACQUIRE (1964), rethemed.
+
+ Made with and for
+   FujiNet     fujinet.online
+   fujinet-nio, on the Palm itself:
+   the network is the Palm's own
+   prc-tools, pilrc
+
+ Fonts: Share Tech Mono, VT323,
+   Orbitron (SIL Open Font License)
+
+ Free software, GPL-3.0:
+ github.com/michaelsternberg/
+   syn-ack-wire
